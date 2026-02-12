@@ -1,4 +1,4 @@
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import LeaningLogForm
 from .models import LearningLog
@@ -24,3 +24,14 @@ def index(request):
         "form": form,  # フォームも画面に渡す
     }
     return render(request, "tracker/index.html", context)
+
+
+def delete_log(request, pk):
+    # データを1つ特定する（見つからなかったら404エラーを出す）
+    log = get_object_or_404(LearningLog, pk=pk)
+
+    # 削除を実行
+    log.delete()
+
+    # 一覧ページに戻る
+    return redirect("index")

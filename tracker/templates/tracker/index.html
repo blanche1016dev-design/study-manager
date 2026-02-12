@@ -61,10 +61,34 @@
     </div>
     <hr />
     {% for log in logs %}
-    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px">
+    <div
+      style="
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        position: relative;
+      "
+    >
       <h3>{{ log.subject }} <small>({{ log.study_time }}分)</small></h3>
       <p>{{ log.content }}</p>
       <p style="color: gray; font-size: 0.8em">{{ log.created_at }}</p>
+
+      <a
+        href="{% url 'delete_log' log.pk %}"
+        style="
+          position: absolute;
+          top: 10px;
+          right: 10px;
+          color: red;
+          text-decoration: none;
+          border: 1px solid red;
+          padding: 2px 8px;
+          border-radius: 4px;
+        "
+        onclick="return confirm('本当に削除しますか？');"
+      >
+        削除
+      </a>
     </div>
     {% empty %}
     <p>まだ記録はありません。</p>
