@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <title>学習管理ツール</title>
+  </head>
+  <body>
+    <h1>学習記録一覧</h1>
+
+    {% for log in logs %}
+    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px">
+      <h3>{{ log.subject }} <small>({{ log.study_time }}分)</small></h3>
+      <p>{{ log.content }}</p>
+      <p style="color: gray; font-size: 0.8em">{{ log.created_at }}</p>
+    </div>
+    {% empty %}
+    <p>まだ記録はありません。</p>
+    {% endfor %}
+  </body>
+</html>
