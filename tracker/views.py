@@ -1,12 +1,26 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 
+from .forms import LeaningLogForm
 from .models import LearningLog
 
 
 def index(request):
-    # 1. データベースから全ての学習記録を取得する
-    logs = LearningLog.objects.all().order_by("-created_at")  # 新しい順に並び変え
+    # 1. 送信ボタンが押されたとき（POSTメソッド）
+    if request.method == "POST":
+        form = LeaningLogForm(request.POST)
+        if form.is_valid():  # 中身が正しいかチェック
+            form.save()  # 保存
+            return redirect("index")  # 自分自身のページにリダイレクト（二重送信防止）
 
-    # 2. HTML（テンプレート）にデータを渡す
-    context = {"logs": logs}
+    # 2. 普通にページを開いたとき（GETメソッド）
+    else:
+        form = LeaningLogForm()  # 空のフォームを作る
+
+    # 3. データを取得して表示
+    logs = LearningLog.objects.all().order_by("-created_at")
+
+    context = {
+        "logs": logs,
+        "form": form,  # フォームも画面に渡す
+    }
     return render(request, "tracker/index.html", context)

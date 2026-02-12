@@ -2,11 +2,64 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>学習管理ツール</title>
+    <style>
+      /* フォームの各行（<p>タグ）のデザイン */
+      form p {
+        display: flex;
+        flex-direction: column; /* 縦並びにする */
+        margin-bottom: 15px;
+      }
+
+      /* ラベル（文字）を太字にして少し下に余白を入れる */
+      label {
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* 入力欄を横幅いっぱいに広げる */
+      input[type="text"],
+      input[type="number"],
+      textarea {
+        width: 100%; /* 親要素いっぱいまで広げる */
+        padding: 8px; /* 内側の余白 */
+        box-sizing: border-box; /* 枠線を埋めて計算 */
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+    </style>
   </head>
   <body>
     <h1>学習記録一覧</h1>
+    <div
+      style="
+        background-color: #f0f0f0;
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 8px;
+      "
+    >
+      <h2>📝 新しい記録をつける</h2>
+      <form method="post">
+        {% csrf_token %} {{ form.as_p }}
 
+        <button
+          type="submit"
+          style="
+            background-color: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+          "
+        >
+          記録する
+        </button>
+      </form>
+    </div>
+    <hr />
     {% for log in logs %}
     <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px">
       <h3>{{ log.subject }} <small>({{ log.study_time }}分)</small></h3>
