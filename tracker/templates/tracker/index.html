@@ -1,97 +1,72 @@
-<!doctype html>
-<html lang="ja">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>学習管理ツール</title>
-    <style>
-      /* フォームの各行（<p>タグ）のデザイン */
-      form p {
-        display: flex;
-        flex-direction: column; /* 縦並びにする */
-        margin-bottom: 15px;
-      }
-
-      /* ラベル（文字）を太字にして少し下に余白を入れる */
-      label {
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-
-      /* 入力欄を横幅いっぱいに広げる */
-      input[type="text"],
-      input[type="number"],
-      textarea {
-        width: 100%; /* 親要素いっぱいまで広げる */
-        padding: 8px; /* 内側の余白 */
-        box-sizing: border-box; /* 枠線を埋めて計算 */
-        border: 1px solid #ccc;
-        border-radius: 4px;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>学習記録一覧</h1>
-    <div
-      style="
-        background-color: #f0f0f0;
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 8px;
-      "
-    >
-      <h2>📝 新しい記録をつける</h2>
-      <form method="post">
-        {% csrf_token %} {{ form.as_p }}
-
-        <button
-          type="submit"
-          style="
-            background-color: #4caf50;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-          "
-        >
-          記録する
-        </button>
-      </form>
+{% extends 'tracker/base.html' %} {% block content %}
+<div class="row">
+  <div class="col-md-4 mb-4">
+    <div class="card">
+      <div class="card-header bg-white fw-bold">📝 新しい記録</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-bold">科目</label>
+            {{ form.subject }}
+            <script>
+              // 簡易的にBootstrapのスタイルを適用するJavaScript
+              document
+                .querySelectorAll("input, textarea")
+                .forEach((e) => e.classList.add("form-control"));
+            </script>
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">学習内容</label>
+            {{ form.content }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">時間(分)</label>
+            {{ form.study_time }}
+          </div>
+          <button type="submit" class="btn btn-primary w-100">記録する</button>
+        </form>
+      </div>
     </div>
-    <hr />
-    {% for log in logs %}
-    <div
-      style="
-        border: 1px solid #ccc;
-        padding: 10px;
-        margin-bottom: 10px;
-        position: relative;
-      "
-    >
-      <h3>{{ log.subject }} <small>({{ log.study_time }}分)</small></h3>
-      <p>{{ log.content }}</p>
-      <p style="color: gray; font-size: 0.8em">{{ log.created_at }}</p>
+  </div>
 
-      <a
-        href="{% url 'delete_log' log.pk %}"
-        style="
-          position: absolute;
-          top: 10px;
-          right: 10px;
-          color: red;
-          text-decoration: none;
-          border: 1px solid red;
-          padding: 2px 8px;
-          border-radius: 4px;
-        "
-        onclick="return confirm('本当に削除しますか？');"
-      >
-        削除
-      </a>
+  <div class="col-md-8">
+    <h4 class="mb-3 border-bottom pb-2">📚 学習履歴</h4>
+    {% for log in logs %}
+    <div class="card mb-3 position-relative">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="card-title mb-0 fw-bold text-primary">
+            {{ log.subject }}
+          </h5>
+          <span class="badge bg-secondary">{{ log.study_time }}分</span>
+        </div>
+        <p class="card-text">{{ log.content|linebreaksbr }}</p>
+        <div class="d-flex justify-content-between align-items-end">
+          <small class="text-muted">
+            📅 {{ log.updated_at|date:"Y/m/d H:i" }}
+          </small>
+          <div>
+            <a
+              href="{% url 'edit_log' log.pk %}"
+              class="btn btn-sm btn-outline-success me-1"
+              >編集</a
+            >
+            <a
+              href="{% url 'delete_log' log.pk %}"
+              class="btn btn-sm btn-outline-danger"
+              onclick="return confirm('本当に削除しますか？');"
+              >削除</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
     {% empty %}
-    <p>まだ記録はありません。</p>
+    <div class="alert alert-info">
+      まだ記録はありません。左のフォームから追加してください！
+    </div>
     {% endfor %}
-  </body>
-</html>
+  </div>
+</div>
+{% endblock %}

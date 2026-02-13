@@ -1,0 +1,37 @@
+{% extends 'tracker/base.html' %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card border-warning">
+      <div class="card-header bg-warning text-dark fw-bold">✏️ 記録の編集</div>
+      <div class="card-body">
+        <form method="post">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label fw-bold">科目</label>
+            {{ form.subject }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">学習内容</label>
+            {{ form.content }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">時間(分)</label>
+            {{ form.study_time }}
+          </div>
+
+          <div class="d-grid gap-2">
+            <button type="submit" class="btn btn-warning">変更を保存</button>
+            <a href="{% url 'index' %}" class="btn btn-secondary">キャンセル</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document
+    .querySelectorAll("input, textarea")
+    .forEach((e) => e.classList.add("form-control"));
+</script>
+{% endblock %}

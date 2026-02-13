@@ -35,3 +35,28 @@ def delete_log(request, pk):
 
     # 一覧ページに戻る
     return redirect("index")
+
+
+def edit_log(request, pk):
+    # 1. 編集したいデータを特定する（Modelにお願い）
+    log = get_object_or_404(LearningLog, pk=pk)
+
+    # 2. 【2周目】修正データが送られてきたとき（POST）
+    if request.method == "POST":
+        # フォームに「送られてきたデータ」と「元のデータ（instance）」を渡す
+        form = LeaningLogForm(request.POST, instance=log)
+        if form.is_valid():
+            form.save()  # 上書き保存
+            return redirect("index")
+
+    # 3 【1周目】最初に編集ページを開いたとき（GET）
+    else:
+        # フォームに「元のデータ（instance）」を入れておく（これが初期値になる）
+        form = LeaningLogForm(instance=log)
+
+        # 4 編集画面を表示（Templateへ）
+        context = {
+            "form": form,
+            "log": log,  # "○○の編集"と表示するためにデータも渡す
+        }
+        return render(request, "tracker/edit.html", context)
