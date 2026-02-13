@@ -1,7 +1,10 @@
+import datetime
+
+from django.db.models import Sum
 from django.shortcuts import get_object_or_404, redirect, render
 
 from .forms import LeaningLogForm
-from .models import LearningLog
+from .models import Goal, LearningLog
 
 
 def index(request):
@@ -16,12 +19,47 @@ def index(request):
     else:
         form = LeaningLogForm()  # 空のフォームを作る
 
-    # 3. データを取得して表示
     logs = LearningLog.objects.all().order_by("-created_at")
+    # 3. 今月の合計時間を計算する
+    now = datetime.datetime.now()
+
+    # 今月のデータだけを絞り込み、study_tijme を合計（Sum）する
+    total = LearningLog.objects.filter(
+        created_at__year=now.year, created_at__month=now.month
+    ).aggregate(Sum("study_time"))
+
+    # 結果を取り出す（データが空なら、Noneになるので０にする）
+    total_time = total["study_time__sum"] or 0
+
+    # データベースから最新の目標設定を1つ取ってくる
+    latest_goal = Goal.objects.last()
+
+    if latest_goal:
+        # 設定があればその数値を使う
+        goal_time = latest_goal.target_time
+    else:
+        goal_time = 1200
+
+    # 進捗率（％）を計算
+    if goal_time > 0:
+        progress_rate = int(total_time / goal_time) * 100
+    else:
+        progress_rate = 0
+
+    # 100%を超えたら100%にする（見た目のため）
+    display_rate = min(progress_rate, 100)
+
+    # 残り時間を計算
+    remaining_time = max(goal_time - total_time, 0)
 
     context = {
         "logs": logs,
-        "form": form,  # フォームも画面に渡す
+        "form": form,
+        "total_time": total_time,
+        "goal_time": goal_time,
+        "progress_rate": progress_rate,
+        "display_rate": display_rate,
+        "remaining_time": remaining_time,
     }
     return render(request, "tracker/index.html", context)
 

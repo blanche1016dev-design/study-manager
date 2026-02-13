@@ -20,3 +20,11 @@ class LearningLog(models.Model):
     def __str__(self):
         # 管理画面で表示される名前
         return f"{self.subject}: {self.content[:20]}..."
+
+
+class Goal(models.Model):
+    target_time = models.IntegerField(verbose_name="目標時間（分）")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="作成日時")
+
+    def __str__(self):
+        return f"目標：{self.target_time}分"

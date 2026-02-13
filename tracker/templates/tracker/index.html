@@ -1,4 +1,37 @@
 {% extends 'tracker/base.html' %} {% block content %}
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+      <h4 class="card-title mb-0 text-primary fw-bold">
+        📅 今月の目標: 20時間
+      </h4>
+      <div class="text-end">
+        <span class="fs-4 fw-bold">{{ total_time }}</span>
+        <small class="text-muted">/ {{ goal_time }}分</small>
+      </div>
+    </div>
+
+    <div class="progress" style="height: 25px">
+      <div
+        class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+        role="progressbar"
+        style="width: {{ display_rate }}%;"
+        aria-valuenow="{{ progress_rate }}"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      >
+        {{ progress_rate }}%
+      </div>
+    </div>
+
+    <p class="text-muted mt-2 mb-0 text-end">
+      {% if remaining_time > 0 %} あと
+      <strong class="text-danger">{{ remaining_time }}分</strong>
+      で達成！頑張ろう🔥 {% else %} 🎉 目標達成おめでとう！素晴らしい努力です！
+      🎉 {% endif %}
+    </p>
+  </div>
+</div>
 <div class="row">
   <div class="col-md-4 mb-4">
     <div class="card">
@@ -10,7 +43,6 @@
             <label class="form-label fw-bold">科目</label>
             {{ form.subject }}
             <script>
-              // 簡易的にBootstrapのスタイルを適用するJavaScript
               document
                 .querySelectorAll("input, textarea")
                 .forEach((e) => e.classList.add("form-control"));
